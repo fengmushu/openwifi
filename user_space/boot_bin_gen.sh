@@ -4,14 +4,14 @@
 # SPDX-FileCopyrightText: 2019 UGent
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-if [ "$#" -ne 3 ]; then
-    echo "You must enter exactly 3 arguments: \$OPENWIFI_HW_DIR \$XILINX_DIR \$BOARD_NAME"
-    exit 1
-fi
+# if [ "$#" -ne 3 ]; then
+#     echo "You must enter exactly 3 arguments: \$OPENWIFI_HW_DIR \$XILINX_DIR \$BOARD_NAME"
+#     exit 1
+# fi
 
-OPENWIFI_HW_DIR=$1
-XILINX_DIR=$2
-BOARD_NAME=$3
+OPENWIFI_HW_DIR=$(pwd)/../../openwifi-hw/
+XILINX_DIR=/opt/Xilinx/
+BOARD_NAME=zed_fmcs2
 
 OPENWIFI_DIR=$(pwd)/../
 
@@ -25,12 +25,12 @@ else
     exit 1
 fi
 
-if [ -d "$XILINX_DIR/SDK" ]; then
-    echo "\$XILINX_DIR is found!"
-else
-    echo "\$XILINX_DIR is not correct. Please check!"
-    exit 1
-fi
+# if [ -d "$XILINX_DIR/SDK" ]; then
+#     echo "\$XILINX_DIR is found!"
+# else
+#     echo "\$XILINX_DIR is not correct. Please check!"
+#     exit 1
+# fi
 
 if [ "$BOARD_NAME" != "antsdr" ] && [ "$BOARD_NAME" != "antsdr_e200" ] && [ "$BOARD_NAME" != "sdrpi" ] && [ "$BOARD_NAME" != "zc706_fmcs2" ] && [ "$BOARD_NAME" != "zc702_fmcs2" ] && [ "$BOARD_NAME" != "zed_fmcs2" ] && [ "$BOARD_NAME" != "adrv9361z7035" ] && [ "$BOARD_NAME" != "adrv9364z7020" ]; then
     echo "\$BOARD_NAME is not correct. Please check!"
@@ -51,7 +51,8 @@ home_dir=$(pwd)
 set -ex
 
 # check if user entered the right path to SDK
-source $XILINX_DIR/SDK/2018.3/settings64.sh
+# source $XILINX_DIR/SDK/2018.3/settings64.sh
+source $XILINX_DIR/Vitis/2021.1/settings64.sh
 
 # uncompress the system.hdf and system_top.bit for use
 mkdir -p hdf_and_bit

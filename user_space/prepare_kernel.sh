@@ -5,14 +5,14 @@
 # SPDX-FileCopyrightText: 2019 UGent
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-if [ "$#" -lt 2 ]; then
-    echo "You must enter at least 2 arguments: \$XILINX_DIR ARCH_BIT(32 or 64)"
-    exit 1
-fi
+# if [ "$#" -lt 2 ]; then
+#     echo "You must enter at least 2 arguments: \$XILINX_DIR ARCH_BIT(32 or 64)"
+#     exit 1
+# fi
 
 OPENWIFI_DIR=$(pwd)/../
-XILINX_DIR=$1
-ARCH_OPTION=$2
+XILINX_DIR=/opt/Xilinx/
+ARCH_OPTION=32
 
 if [ -f "$OPENWIFI_DIR/LICENSE" ]; then
     echo "\$OPENWIFI_DIR is found!"
@@ -21,12 +21,12 @@ else
     exit 1
 fi
 
-if [ -d "$XILINX_DIR/SDK" ]; then
-    echo "\$XILINX_DIR is found!"
-else
-    echo "\$XILINX_DIR is not correct. Please check!"
-    exit 1
-fi
+# if [ -d "$XILINX_DIR/SDK" ]; then
+#     echo "\$XILINX_DIR is found!"
+# else
+#     echo "\$XILINX_DIR is not correct. Please check!"
+#     exit 1
+# fi
 
 if [ "$ARCH_OPTION" != "32" ] && [ "$ARCH_OPTION" != "64" ]; then
     echo "\$ARCH_OPTION is not correct. Should be 32 or 64. Please check!"
@@ -53,31 +53,31 @@ home_dir=$(pwd)
 
 set -x
 
-cd $OPENWIFI_DIR/
-git submodule init $LINUX_KERNEL_SRC_DIR_NAME
-git submodule update $LINUX_KERNEL_SRC_DIR_NAME
+# cd $OPENWIFI_DIR/
+# git submodule init $LINUX_KERNEL_SRC_DIR_NAME
+# git submodule update $LINUX_KERNEL_SRC_DIR_NAME
 cd $OPENWIFI_DIR/$LINUX_KERNEL_SRC_DIR_NAME
-git checkout 2019_R1
-git pull origin 2019_R1
-git reset --hard
+# git checkout 2019_R1
+# git pull origin 2019_R1
+# git reset --hard
 # git reset --hard 4e81f0927cfb2fada92fc762dbd65d002848405a
 cp $LINUX_KERNEL_CONFIG_FILE ./.config
 cp $OPENWIFI_DIR/driver/ad9361/ad9361.c $OPENWIFI_DIR/$LINUX_KERNEL_SRC_DIR_NAME/drivers/iio/adc/ad9361.c -rf
 cp $OPENWIFI_DIR/driver/ad9361/ad9361_conv.c $OPENWIFI_DIR/$LINUX_KERNEL_SRC_DIR_NAME/drivers/iio/adc/ad9361_conv.c -rf
 
-source $XILINX_DIR/SDK/2018.3/settings64.sh
+source $XILINX_DIR/Vitis/2021.1/settings64.sh
 export ARCH=$ARCH_NAME
 export CROSS_COMPILE=$CROSS_COMPILE_NAME
 
 make oldconfig && make prepare && make modules_prepare
 
-if [ "$#" -gt 2 ]; then
+# if [ "$#" -gt 2 ]; then
     # if [ -f "$OPENWIFI_DIR/$LINUX_KERNEL_SRC_DIR_NAME/arch/$ARCH_NAME/boot/$IMAGE_TYPE" ]; then
     #     echo "Kernel found! Skip the time costly Linux kernel compiling."
     # else
         make -j12 $IMAGE_TYPE UIMAGE_LOADADDR=0x8000
         make modules
     # fi
-fi
+# fi
 
 cd $home_dir

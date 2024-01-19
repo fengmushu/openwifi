@@ -5,16 +5,16 @@
 # SPDX-FileCopyrightText: 2019 UGent
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-if [ "$#" -ne 4 ]; then
-    echo "You have input $# arguments."
-    echo "You must enter exactly 4 arguments: \$OPENWIFI_HW_DIR \$XILINX_DIR \$BOARD_NAME \$SDCARD_DIR"
-    exit 1
-fi
+# if [ "$#" -ne 4 ]; then
+#     echo "You have input $# arguments."
+#     echo "You must enter exactly 4 arguments: \$OPENWIFI_HW_DIR \$XILINX_DIR \$BOARD_NAME \$SDCARD_DIR"
+#     exit 1
+# fi
 
-OPENWIFI_HW_DIR=$1
-XILINX_DIR=$2
-BOARD_NAME=$3
-SDCARD_DIR=$4
+OPENWIFI_HW_DIR=$(pwd)/../../openwifi-hw/
+XILINX_DIR=/opt/Xilinx/
+BOARD_NAME=zed_fmcs2
+SDCARD_DIR=/tmp/sdcard
 
 OPENWIFI_DIR=$(pwd)/../
 
@@ -28,12 +28,12 @@ else
     exit 1
 fi
 
-if [ -d "$XILINX_DIR/SDK" ]; then
-    echo "\$XILINX_DIR is found!"
-else
-    echo "\$XILINX_DIR is not correct. Please check!"
-    exit 1
-fi
+# if [ -d "$XILINX_DIR/SDK" ]; then
+#     echo "\$XILINX_DIR is found!"
+# else
+#     echo "\$XILINX_DIR is not correct. Please check!"
+#     exit 1
+# fi
 
 if [ "$BOARD_NAME" != "antsdr" ] && [ "$BOARD_NAME" != "antsdr_e200" ] && [ "$BOARD_NAME" != "sdrpi" ] && [ "$BOARD_NAME" != "zc706_fmcs2" ] && [ "$BOARD_NAME" != "zc702_fmcs2" ] && [ "$BOARD_NAME" != "zed_fmcs2" ] && [ "$BOARD_NAME" != "adrv9361z7035" ] && [ "$BOARD_NAME" != "adrv9364z7020" ] && [ "$BOARD_NAME" != "zcu102_fmcs2" ] && [ "$BOARD_NAME" != "zcu102_9371" ]; then
     echo "\$BOARD_NAME is not correct. Please check!"
@@ -83,17 +83,17 @@ home_dir=$(pwd)
 set -x
 
 LINUX_KERNEL_SRC_DIR_NAME32=adi-linux
-LINUX_KERNEL_SRC_DIR_NAME64=adi-linux-64
+# LINUX_KERNEL_SRC_DIR_NAME64=adi-linux-64
 
 cd $OPENWIFI_DIR/user_space/
 ./prepare_kernel.sh $XILINX_DIR 32 build
 sudo true
-./prepare_kernel.sh $XILINX_DIR 64 build
-sudo true
+# ./prepare_kernel.sh $XILINX_DIR 64 build
+# sudo true
 
-BOARD_NAME_ALL="sdrpi antsdr antsdr_e200 zc706_fmcs2 zed_fmcs2 zc702_fmcs2 adrv9361z7035 adrv9364z7020 zcu102_fmcs2 zcu102_9371"
+# BOARD_NAME_ALL="sdrpi antsdr antsdr_e200 zc706_fmcs2 zed_fmcs2 zc702_fmcs2 adrv9361z7035 adrv9364z7020 zcu102_fmcs2 zcu102_9371"
 # BOARD_NAME_ALL="zcu102_fmcs2"
-# BOARD_NAME_ALL="adrv9361z7035"
+BOARD_NAME_ALL="zed_fmcs2"
 for BOARD_NAME_TMP in $BOARD_NAME_ALL
 do
     if [ "$BOARD_NAME_TMP" == "zcu102_fmcs2" ] || [ "$BOARD_NAME_TMP" == "zcu102_9371" ]; then
@@ -117,8 +117,8 @@ done
 
 sudo mkdir $SDCARD_DIR/BOOT/openwifi/zynq-common
 sudo cp $OPENWIFI_DIR/$LINUX_KERNEL_SRC_DIR_NAME32/arch/arm/boot/uImage  $SDCARD_DIR/BOOT/openwifi/zynq-common/
-sudo mkdir $SDCARD_DIR/BOOT/openwifi/zynqmp-common
-sudo cp $OPENWIFI_DIR/$LINUX_KERNEL_SRC_DIR_NAME64/arch/arm64/boot/Image $SDCARD_DIR/BOOT/openwifi/zynqmp-common/
+# sudo mkdir $SDCARD_DIR/BOOT/openwifi/zynqmp-common
+# sudo cp $OPENWIFI_DIR/$LINUX_KERNEL_SRC_DIR_NAME64/arch/arm64/boot/Image $SDCARD_DIR/BOOT/openwifi/zynqmp-common/
 
 sudo mkdir $SDCARD_DIR/rootfs/root/openwifi
 
@@ -152,16 +152,16 @@ sudo mkdir $SDCARD_DIR/rootfs/root/openwifi/drv32
 sudo find $OPENWIFI_DIR/driver -name \*.ko -exec cp {} $SDCARD_DIR/rootfs/root/openwifi/drv32 \;
 
 # build openwifi driver
-saved_dir=$(pwd)
-cd $OPENWIFI_DIR/driver
-./make_all.sh $XILINX_DIR 64
-cd $OPENWIFI_DIR/driver/side_ch
-./make_driver.sh $XILINX_DIR 64
-cd $saved_dir
+# saved_dir=$(pwd)
+# cd $OPENWIFI_DIR/driver
+# ./make_all.sh $XILINX_DIR 64
+# cd $OPENWIFI_DIR/driver/side_ch
+# ./make_driver.sh $XILINX_DIR 64
+# cd $saved_dir
 
 # Copy files to SD card rootfs partition
-sudo mkdir $SDCARD_DIR/rootfs/root/openwifi/drv64
-sudo find $OPENWIFI_DIR/driver -name \*.ko -exec cp {} $SDCARD_DIR/rootfs/root/openwifi/drv64 \;
+# sudo mkdir $SDCARD_DIR/rootfs/root/openwifi/drv64
+# sudo find $OPENWIFI_DIR/driver -name \*.ko -exec cp {} $SDCARD_DIR/rootfs/root/openwifi/drv64 \;
 
 sudo mkdir $SDCARD_DIR/rootfs/lib/modules
 
@@ -171,11 +171,11 @@ sudo mv $SDCARD_DIR/rootfs/lib/modules/$LINUX_KERNEL_SRC_DIR_NAME32/xilinx_dma.k
 sudo mv $SDCARD_DIR/rootfs/lib/modules/$LINUX_KERNEL_SRC_DIR_NAME32/ad9361_drv.ko $SDCARD_DIR/rootfs/root/openwifi/drv32
 sudo rm $SDCARD_DIR/rootfs/lib/modules/$LINUX_KERNEL_SRC_DIR_NAME32/{axidmatest.ko,adi_axi_hdmi.ko} -f
 
-sudo mkdir $SDCARD_DIR/rootfs/lib/modules/$LINUX_KERNEL_SRC_DIR_NAME64
-sudo find $OPENWIFI_DIR/$LINUX_KERNEL_SRC_DIR_NAME64 -name \*.ko -exec cp {} $SDCARD_DIR/rootfs/lib/modules/$LINUX_KERNEL_SRC_DIR_NAME64/ \;
-sudo mv $SDCARD_DIR/rootfs/lib/modules/$LINUX_KERNEL_SRC_DIR_NAME64/xilinx_dma.ko $SDCARD_DIR/rootfs/root/openwifi/drv64
-sudo mv $SDCARD_DIR/rootfs/lib/modules/$LINUX_KERNEL_SRC_DIR_NAME64/ad9361_drv.ko $SDCARD_DIR/rootfs/root/openwifi/drv64
-sudo rm $SDCARD_DIR/rootfs/lib/modules/$LINUX_KERNEL_SRC_DIR_NAME64/{axidmatest.ko,adi_axi_hdmi.ko} -f
+# sudo mkdir $SDCARD_DIR/rootfs/lib/modules/$LINUX_KERNEL_SRC_DIR_NAME64
+# sudo find $OPENWIFI_DIR/$LINUX_KERNEL_SRC_DIR_NAME64 -name \*.ko -exec cp {} $SDCARD_DIR/rootfs/lib/modules/$LINUX_KERNEL_SRC_DIR_NAME64/ \;
+# sudo mv $SDCARD_DIR/rootfs/lib/modules/$LINUX_KERNEL_SRC_DIR_NAME64/xilinx_dma.ko $SDCARD_DIR/rootfs/root/openwifi/drv64
+# sudo mv $SDCARD_DIR/rootfs/lib/modules/$LINUX_KERNEL_SRC_DIR_NAME64/ad9361_drv.ko $SDCARD_DIR/rootfs/root/openwifi/drv64
+# sudo rm $SDCARD_DIR/rootfs/lib/modules/$LINUX_KERNEL_SRC_DIR_NAME64/{axidmatest.ko,adi_axi_hdmi.ko} -f
 
 sudo rm $SDCARD_DIR/rootfs/etc/udev/rules.d/70-persistent-net.rules
 sudo cp $OPENWIFI_DIR/kernel_boot/70-persistent-net.rules $SDCARD_DIR/rootfs/etc/udev/rules.d/
@@ -196,5 +196,5 @@ sync
 
 cd $home_dir
 
-umount $SDCARD_DIR/BOOT/
-umount $SDCARD_DIR/rootfs/
+sudo umount $SDCARD_DIR/BOOT/
+sudo umount $SDCARD_DIR/rootfs/

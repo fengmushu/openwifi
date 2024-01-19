@@ -12,13 +12,13 @@ print_usage () {
 
 print_usage
 
-if [ "$#" -lt 2 ]; then
-    exit 1
-fi
+# if [ "$#" -lt 2 ]; then
+#     exit 1
+# fi
 
 OPENWIFI_DIR=$(pwd)/../
-XILINX_DIR=$1
-ARCH_OPTION=$2
+XILINX_DIR=/opt/Xilinx/
+ARCH_OPTION=32
 
 echo OPENWIFI_DIR $OPENWIFI_DIR
 echo XILINX_DIR $XILINX_DIR
@@ -31,12 +31,12 @@ else
     exit 1
 fi
 
-if [ -d "$XILINX_DIR/SDK" ]; then
-    echo "\$XILINX_DIR is found!"
-else
-    echo "\$XILINX_DIR is not correct. Please check!"
-    exit 1
-fi
+# if [ -d "$XILINX_DIR/SDK" ]; then
+#     echo "\$XILINX_DIR is found!"
+# else
+#     echo "\$XILINX_DIR is not correct. Please check!"
+#     exit 1
+# fi
 
 if [ "$ARCH_OPTION" != "32" ] && [ "$ARCH_OPTION" != "64" ]; then
     echo "\$ARCH_OPTION is not correct. Should be 32 or 64. Please check!"
@@ -72,7 +72,7 @@ if [[ -n $7 ]]; then
     echo "#define $DEFINE5" >> pre_def.h
 fi
 
-source $XILINX_DIR/SDK/2018.3/settings64.sh
+source $XILINX_DIR/Vitis/2021.1/settings64.sh
 if [ "$ARCH_OPTION" == "64" ]; then
     LINUX_KERNEL_SRC_DIR=$OPENWIFI_DIR/adi-linux-64/
     ARCH="arm64"
